@@ -24,7 +24,14 @@ import androidx.compose.ui.unit.dp
 import com.krislao.mathgameapp.ui.theme.MathGameAppTheme
 
 @Composable
-fun ResultsScreen(modifier: Modifier = Modifier) {
+fun ResultsScreen(
+    correctAnswers: Int,
+    wrongAnswers: Int,
+    totalQuestions: Int,
+    modifier: Modifier = Modifier,
+    onExitGame: () -> Unit = {},
+    onPlayAgain: () -> Unit = {}
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -33,11 +40,7 @@ fun ResultsScreen(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Center
     ) {
         Text(text = "Game Results", style = MaterialTheme.typography.displayMedium)
-        Spacer(modifier = Modifier.height(8.dp))
-//        Text(text = message, style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.secondary)
-
-        Spacer(modifier = Modifier.height(32.dp))
-
+        Spacer(modifier = Modifier.height(48.dp))
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
@@ -48,7 +51,7 @@ fun ResultsScreen(modifier: Modifier = Modifier) {
             ) {
                 Text(text = "Final Score", style = MaterialTheme.typography.titleLarge)
                 Text(
-                    text = "3 / 4",
+                    text = "$correctAnswers / $totalQuestions",
                     style = MaterialTheme.typography.displayLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -60,35 +63,40 @@ fun ResultsScreen(modifier: Modifier = Modifier) {
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(text = "Correct", style = MaterialTheme.typography.labelLarge)
-                        Text(text = "3", color = Color(0xFF4CAF50), style = MaterialTheme.typography.headlineSmall)
+                        Text(
+                            text = "$correctAnswers",
+                            color = Color(0xFF4CAF50),
+                            style = MaterialTheme.typography.headlineSmall
+                        )
                     }
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(text = "Wrong", style = MaterialTheme.typography.labelLarge)
-                        Text(text = "1", color = Color.Red, style = MaterialTheme.typography.headlineSmall)
+                        Text(
+                            text = "$wrongAnswers",
+                            color = Color.Red,
+                            style = MaterialTheme.typography.headlineSmall
+                        )
                     }
                 }
             }
         }
-
         Spacer(modifier = Modifier.height(54.dp))
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             // Secondary Action
             OutlinedButton(
-                onClick = { /* Handle Exit */ },
+                onClick = onExitGame,
                 modifier = Modifier
                     .weight(1f)
                     .height(56.dp)
             ) {
                 Text("Exit Game")
             }
-
             // Primary Action
             Button(
-                onClick = { /* Handle Play Again */ },
+                onClick = onPlayAgain,
                 modifier = Modifier
                     .weight(1f)
                     .height(56.dp)
@@ -100,11 +108,14 @@ fun ResultsScreen(modifier: Modifier = Modifier) {
 }
 
 
-
 @Preview(showBackground = true)
 @Composable
 fun ResultsScreenPreview() {
     MathGameAppTheme {
-        ResultsScreen()
+        ResultsScreen(
+            correctAnswers = 2,
+            wrongAnswers = 1,
+            totalQuestions = 3
+        )
     }
 }
