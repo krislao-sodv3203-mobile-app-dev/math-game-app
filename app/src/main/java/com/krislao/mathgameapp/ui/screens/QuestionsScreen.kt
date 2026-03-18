@@ -17,6 +17,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,10 +27,17 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.krislao.mathgameapp.ui.GameViewModel
 import com.krislao.mathgameapp.ui.theme.MathGameAppTheme
 
 @Composable
-fun QuestionsScreen(modifier: Modifier = Modifier) {
+fun QuestionsScreen(
+    modifier: Modifier = Modifier,
+    gameViewModel: GameViewModel = viewModel(),
+) {
+    val gameUiState by gameViewModel.uiState.collectAsState()
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -36,7 +45,11 @@ fun QuestionsScreen(modifier: Modifier = Modifier) {
             .padding(24.dp)
     ) {
         Spacer(modifier = Modifier.height(16.dp))
-        GameStatus()
+        GameStatus(
+            correctAnswers = gameUiState.correctAnswers,
+            wrongAnswers = gameUiState.wrongAnswers,
+            modifier = Modifier.fillMaxWidth()
+        )
 
         Column(
             verticalArrangement = Arrangement.Center,
@@ -44,7 +57,7 @@ fun QuestionsScreen(modifier: Modifier = Modifier) {
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = "Question 2 of 4",
+                text = "Question ${gameUiState.questionsCount} of ${gameUiState.totalQuestions}",
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -53,14 +66,18 @@ fun QuestionsScreen(modifier: Modifier = Modifier) {
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "99 + 99 =",
+                    text = "${gameUiState.addendOne} + ${gameUiState.addendTwo} =",
                     style = MaterialTheme.typography.displaySmall,
                     fontWeight = FontWeight.Bold,
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 OutlinedTextField(
-                    value = "",
-                    onValueChange = {},
+                    value = gameViewModel.inputUserAnswer,
+                    onValueChange = { input ->
+                        if (input.all { it.isDigit() }) {
+                            gameViewModel.updateUserAnswer(input)
+                        }
+                    },
                     label = { Text("Answer") },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
@@ -92,7 +109,7 @@ fun QuestionsScreen(modifier: Modifier = Modifier) {
                     .weight(1f)
                     .height(56.dp),
                 enabled = true,
-                onClick = {}
+                onClick = { gameViewModel.checkUserAnswer() }
             ) {
                 Text(text = "Next")
             }
@@ -101,18 +118,22 @@ fun QuestionsScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun GameStatus(modifier: Modifier = Modifier) {
+fun GameStatus(
+    correctAnswers: Int,
+    wrongAnswers: Int,
+    modifier: Modifier = Modifier
+) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "Correct: 0",
+            text = "Correct: $correctAnswers",
             color = Color(0xFF4CAF50),
             style = MaterialTheme.typography.titleMedium
         )
         Text(
-            text = "Wrong: 0",
+            text = "Wrong: $wrongAnswers",
             color = Color.Red,
             style = MaterialTheme.typography.titleMedium
         )
