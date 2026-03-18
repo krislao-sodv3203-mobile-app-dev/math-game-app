@@ -29,7 +29,7 @@ fun ResultsScreen(
     wrongAnswers: Int,
     totalQuestions: Int,
     modifier: Modifier = Modifier,
-    onExitGame: () -> Unit = {},
+    onExit: () -> Unit = {},
     onPlayAgain: () -> Unit = {}
 ) {
     Column(
@@ -87,7 +87,7 @@ fun ResultsScreen(
         ) {
             // Secondary Action
             OutlinedButton(
-                onClick = onExitGame,
+                onClick = onExit,
                 modifier = Modifier
                     .weight(1f)
                     .height(56.dp)

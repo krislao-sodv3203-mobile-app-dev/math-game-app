@@ -22,26 +22,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.krislao.mathgameapp.ui.GameViewModel
 import com.krislao.mathgameapp.ui.theme.MathGameAppTheme
 
 @Composable
 fun StartScreen(
-    gameViewModel: GameViewModel = viewModel(),
-    modifier: Modifier
-) {
-    StartScreenContent(
-        totalQuestions = gameViewModel.inputTotalQuestions,
-        isInputValid = gameViewModel.isInputValid,
-        onInputChange = { gameViewModel.updateInputTotalQuestions(it) },
-        onGameStart = { gameViewModel.startGame() },
-        modifier = modifier
-    )
-}
-
-@Composable
-fun StartScreenContent(
     totalQuestions: String,
     isInputValid: Boolean,
     modifier: Modifier = Modifier,
@@ -51,9 +35,7 @@ fun StartScreenContent(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = modifier
-            .fillMaxSize()
-            .padding(24.dp)
+        modifier = modifier.fillMaxSize()
     ) {
         Text(
             text = "Math Game",
@@ -92,7 +74,7 @@ fun StartScreenContent(
         )
         Spacer(modifier = Modifier.height(54.dp))
         Button(
-            onClick = { onGameStart() },
+            onClick = onGameStart,
             enabled = isInputValid,
             modifier = Modifier
                 .fillMaxWidth()
@@ -112,7 +94,7 @@ fun StartScreenContent(
 @Composable
 fun StartScreenPreview() {
     MathGameAppTheme {
-        StartScreenContent(
+        StartScreen(
             totalQuestions = "2",
             isInputValid = false,
         )

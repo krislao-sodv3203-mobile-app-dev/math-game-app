@@ -7,4 +7,5 @@ data class GameUiState(
     val addendTwo: Int = 0,
     val correctAnswers: Int = 0,
     val wrongAnswers: Int = 0,
+    val isGameOver: Boolean = false,
 )
