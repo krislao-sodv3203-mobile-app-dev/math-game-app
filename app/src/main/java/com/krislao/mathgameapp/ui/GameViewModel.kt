@@ -55,9 +55,12 @@ class GameViewModel : ViewModel() {
             )
         }
         generateNewQuestion()
+        inputTotalQuestions = ""
     }
 
     fun resetGame() {
+        inputTotalQuestions = ""
+        inputUserAnswer = ""
         _uiState.value = GameUiState()
     }
 

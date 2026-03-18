@@ -1,5 +1,6 @@
 package com.krislao.mathgameapp
 
+import android.app.Activity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -8,6 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -30,6 +32,8 @@ fun MathGameApp(
     viewModel: GameViewModel = viewModel(),
     navController: NavHostController = rememberNavController()
 ) {
+    val context = LocalContext.current
+
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         val uiState by viewModel.uiState.collectAsState()
 
@@ -40,6 +44,11 @@ fun MathGameApp(
         ) {
             // Call the composable() function once for each of the 3 routes.
             composable(route = MathGameScreen.Start.name) {
+                // reset view model on screen load
+                LaunchedEffect(Unit) {
+                    viewModel.resetGame()
+                }
+
                 StartScreen(
                     totalQuestions = viewModel.inputTotalQuestions,
                     isInputValid = viewModel.isInputValid,
@@ -64,7 +73,7 @@ fun MathGameApp(
                     gameUiState = uiState,
                     answer = viewModel.inputUserAnswer,
                     onAnswerChange = { viewModel.updateUserAnswer(it) },
-                    onCancel = {},
+                    onCancel = { navController.popBackStack() },
                     onAnswerSubmit = { viewModel.checkUserAnswer() },
                     modifier = Modifier.padding(24.dp)
                 )
@@ -75,8 +84,10 @@ fun MathGameApp(
                     correctAnswers = uiState.correctAnswers,
                     wrongAnswers = uiState.wrongAnswers,
                     totalQuestions = uiState.totalQuestions,
-                    onExit = { },
-                    onPlayAgain = { viewModel.resetGame() },
+                    onExit = { (context as? Activity)?.finish() },
+                    onPlayAgain = {
+                        navController.popBackStack(MathGameScreen.Start.name, inclusive = false)
+                    },
                 )
             }
         }
